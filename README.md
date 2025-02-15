@@ -12,7 +12,7 @@ This program is meant to act as a helper to startup founders by helping integrat
 3. AI generated surveys (potential for Forms integration to save even more time-- token issues prevented integration under time limit)
 4. Financials management (budgeting and planning)
 5. Evaluating options
-6. Finding major investors and analysing specific pitches to them <needs some further fine tuning with regards to prompt>
+6. Finding major investors and analysing specific pitches to them <could have further fine tuning with regards to prompt, works fine for now>
 7. Marketing
 8. SEO
 9. Finding potential clients
