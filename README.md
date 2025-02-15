@@ -3,7 +3,7 @@ Tools focusing on Gen-AI integration for start-ups and entrepreneurs. Produced f
 
 # Explanation
 
-This program is meant to act as a helper to startup founders by helping integrate and use Gen-AI with various other tools to simplify their workflow. There is one integrated file that one is expected to run 0.py wheras all other files are individual files that have a specific task or act as a specific tool.  
+This program is meant to act as a helper to startup founders by helping integrate and use Gen-AI with various other tools to simplify their workflow. There is one integrated file that one is expected to run **'0.py'** wheras all other files are individual files that have a specific task or act as a specific tool.  
 
 # The numbers on the files mean the following: 
 
