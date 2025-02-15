@@ -7,7 +7,7 @@ This program is meant to act as a helper to startup founders by helping integrat
 
 # The numbers on the files mean the following: 
 
-1. Finding the right people <LinkedIn profiles that could fit targets returned. Needs further fine tuning, uses Custom Google JSON Search Engine.
+1. Finding the right people <LinkedIn profiles that could fit targets returned. Needs further fine tuning, uses Custom Google JSON Search Engine.>
 2. Market Insights, growth domains
 3. AI generated surveys (potential for Forms integration to save even more time-- token issues prevented integration under time limit)
 4. Financials management (budgeting and planning)
