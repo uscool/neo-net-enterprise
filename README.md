@@ -21,3 +21,5 @@ This program is meant to act as a helper to startup founders by helping integrat
 12. Setting up meetings and calendar (Google Calendar)
 
 The 'laws.pdf' file is used to run the legality checks in number 11.
+
+# NOTE THAT THE GUI BRANCH STORES GUI. THIS IS NOT YET COMPLETE, BUT THE INTEGRATION, 1, 2 AND 9, 10 GUI HAVE BEEN ADDED
