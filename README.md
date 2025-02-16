@@ -22,4 +22,4 @@ This program is meant to act as a helper to startup founders by helping integrat
 
 The 'laws.pdf' file is used to run the legality checks in number 11.
 
-### NOTE THAT THE GUI BRANCH STORES GUI. THIS IS NOT YET COMPLETE, BUT THE INTEGRATION, 1, 2, 3, 6 9 AND 10 GUI HAVE BEEN ADDED
+#### NOTE THAT THE GUI BRANCH STORES GUI. THIS IS NOT YET COMPLETE, BUT THE INTEGRATION, 1, 2, 3, 6 9 AND 10 GUI HAVE BEEN ADDED
