@@ -1,16 +1,6 @@
 import os
-
-def display_menu():
-    print("\nSelect a script to run:")
-    print("1. Finding the right people")
-    print("2. Market Insights, growth domains")
-    print("3. AI generated surveys and finding investors")
-    print("4. Financials management and progress reports and evaluating options")
-    print("5. Marketing (Social Media presence growth)")
-    print("6. Legality Checks for Business Decisions")
-    print("7. Calendar Management")
-    print("8. Analyse stakeholders, competitors and entry strategies")
-    print("0. Exit")
+import tkinter as tk
+from tkinter import messagebox
 
 def run_script(script_number):
     script_map = {
@@ -27,22 +17,39 @@ def run_script(script_number):
     script_name = script_map.get(script_number)
     
     if script_name and os.path.exists(script_name):
-        print(f"Running {script_name}...")
+        messagebox.showinfo("Running Script", f"Running {script_name}...")
         os.system(f'python "{script_name}"')
     else:
-        print(f"Script {script_name} not found.")
+        messagebox.showerror("Error", f"Script {script_name} not found.")
 
-def main():
-    while True:
-        display_menu()
-        choice = input("Enter the number of the script to run (or 0 to exit): ")
-        
-        if choice == "0":
-            print("Exiting program.")
-            break
-        elif choice in map(str, range(1, 9)):
-            run_script(choice)
-        else:
-            print("Invalid choice. Please select a valid script number.")
+def on_button_click(choice):
+    if choice == "0":
+        root.destroy()
+    else:
+        run_script(choice)
 
-main()
+root = tk.Tk()
+root.title("Script Runner")
+root.geometry("400x500")
+root.configure(bg="#dbe7f0")  # Muted light blue background
+
+label = tk.Label(root, text="Select a script to run:", font=("Arial", 14, "bold"), bg="#dbe7f0", fg="#333")
+label.pack(pady=10)
+
+buttons = [
+    ("Finding the right people", "1", "#b56576"),  # Muted red
+    ("Market Insights, growth domains", "2", "#6d8b74"),  # Muted green
+    ("AI generated surveys and finding investors", "3", "#4c6a92"),  # Muted blue
+    ("Financials management and evaluating options", "4", "#a17a7d"),  # Muted pink
+    ("Marketing (Social Media presence growth)", "5", "#6b5b95"),  # Muted purple
+    ("Legality Checks for Business Decisions", "6", "#89a1b0"),  # Muted teal
+    ("Calendar Management", "7", "#d4a373"),  # Muted orange
+    ("Entry strategy and stakeholder analysis", "8", "#a3b18a"),  # Muted olive green
+    ("Exit", "0", "#b0a8b9")  # Muted gray
+]
+
+for text, value, color in buttons:
+    btn = tk.Button(root, text=text, font=("Arial", 12), bg=color, fg="white", activebackground="#555", activeforeground="white", command=lambda v=value: on_button_click(v))
+    btn.pack(fill='x', padx=20, pady=5)
+
+root.mainloop()
