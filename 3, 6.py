@@ -1,25 +1,34 @@
 import os
+import tkinter as tk
+from tkinter import ttk, scrolledtext, messagebox, filedialog
 import google.generativeai as genai
-import re
 from dotenv import load_dotenv
 
 load_dotenv("auth.env")
-
 gemini_api_key = os.getenv("GOOGLE_API_KEY")
 genai.configure(api_key=gemini_api_key)
-
-def configure_genai():
-    api_key = os.getenv("GEMINI_API_KEY")
-    if not api_key:
-        print("Error: Please set the GEMINI_API_KEY environment variable")
-        exit(1)
-    genai.configure(api_key=api_key)
 
 def get_gemini_model():
     return genai.GenerativeModel('gemini-pro')
 
-def generate_survey_questions(topic, audience, num_questions=10):
-    model = get_gemini_model()
+def generate_survey_questions():
+    topic = topic_entry.get().strip()
+    audience = audience_entry.get().strip()
+    num_questions = num_questions_entry.get().strip()
+
+    if not topic or not audience:
+        messagebox.showerror("Input Error", "Please enter both Topic and Audience.")
+        return
+
+    try:
+        num_questions = int(num_questions) if num_questions else 10
+    except ValueError:
+        messagebox.showerror("Input Error", "Number of questions must be a number.")
+        return
+
+    output_text.delete(1.0, tk.END)
+    output_text.insert(tk.END, "Generating survey questions...\n")
+
     prompt = f"""
     Create {num_questions} market research questions for {topic}. 
     Target audience: {audience}.
@@ -33,11 +42,27 @@ def generate_survey_questions(topic, audience, num_questions=10):
     Format each question clearly with these sections.
     """
     
-    response = model.generate_content(prompt)
-    return response.text
+    response = get_gemini_model().generate_content(prompt)
+    output_text.insert(tk.END, response.text)
 
-def analyze_company_and_find_investors(company_description, products, industry, stage):
-    model = get_gemini_model()
+def analyze_company_and_find_investors():
+    company_description = company_entry.get("1.0", tk.END).strip()
+    industry = industry_entry.get().strip()
+    stage = stage_entry.get().strip()
+    products_input = products_entry.get().strip()
+
+    if not company_description or not industry:
+        messagebox.showerror("Input Error", "Please enter company description and industry.")
+        return
+
+    products = [p.strip() for p in products_input.split(",") if p.strip()]
+    if not products:
+        messagebox.showerror("Input Error", "Please enter at least one product.")
+        return
+
+    output_text_investor.delete(1.0, tk.END)
+    output_text_investor.insert(tk.END, "Finding investors...\n")
+
     prompt = f"""
     Based on the following company information, identify suitable investors and provide pitch recommendations:
     
@@ -55,78 +80,78 @@ def analyze_company_and_find_investors(company_description, products, industry, 
     Format your response in a clear, readable way with section headings.
     """
     
-    response = model.generate_content(prompt)
-    return response.text
+    response = get_gemini_model().generate_content(prompt)
+    output_text_investor.insert(tk.END, response.text)
 
-def main():
-    
-    while True:
-        print("\nAI-Powered Startup Assistant")
-        print("1. Generate Market Research Survey")
-        print("2. Find Investors and Pitch Recommendations")
-        print("3. Exit")
-        
-        choice = input("Select an option (1-3): ")
-        
-        if choice == "1":
-            topic = input("What product/service are you researching? ")
-            audience = input("Who is your target audience? ")
-            num_questions = input("Number of questions (default: 10): ")
-            
-            if not topic or not audience:
-                print("Error: Topic and audience are required")
-                continue
-                
-            try:
-                num_questions = int(num_questions) if num_questions else 10
-            except ValueError:
-                print("Error: Number of questions must be a number")
-                continue
-                
-            print("\nGenerating survey questions...")
-            questions = generate_survey_questions(topic, audience, num_questions)
-            print("\n--- SURVEY QUESTIONS ---\n")
-            print(questions)
-            
-            filename = input("\nEnter filename to save survey (or press Enter to skip): ")
-            if filename:
-                with open(filename, 'w') as f:
-                    f.write(questions)
-                print(f"Survey saved to {filename}")
-            
-        elif choice == "2":
-            company_description = input("Describe your company: ")
-            industry = input("What industry are you in? ")
-            stage = input("Company stage (e.g., Pre-seed, Seed, Series A): ")
-            products_input = input("List your products (separated by commas): ")
-            
-            if not company_description or not industry:
-                print("Error: Company description and industry are required")
-                continue
-                
-            products = [p.strip() for p in products_input.split(",") if p.strip()]
-            if not products:
-                print("Error: At least one product is required")
-                continue
-            
-            print("\nAnalyzing your company and finding investors...")
-            investor_data = analyze_company_and_find_investors(
-                company_description, products, industry, stage
-            )
-            print("\n--- INVESTOR RECOMMENDATIONS ---\n")
-            print(investor_data)
-            
-            filename = input("\nEnter filename to save recommendations (or press Enter to skip): ")
-            if filename:
-                with open(filename, 'w') as f:
-                    f.write(investor_data)
-                print(f"Recommendations saved to {filename}")
-            
-        elif choice == "3":
-            print("Exiting. Goodbye!")
-            break
-            
-        else:
-            print("Invalid choice. Please select 1, 2, or 3.")
+def save_output(output_widget):
+    text_content = output_widget.get("1.0", tk.END).strip()
+    if not text_content:
+        messagebox.showwarning("No Content", "No content to save!")
+        return
 
-main()
+    file_path = filedialog.asksaveasfilename(defaultextension=".txt", filetypes=[("Text files", "*.txt")])
+    if file_path:
+        with open(file_path, "w", encoding="utf-8") as file:
+            file.write(text_content)
+        messagebox.showinfo("Success", f"Output saved to {file_path}")
+
+root = tk.Tk()
+root.title("AI-Powered Startup Assistant")
+root.geometry("800x600")
+
+notebook = ttk.Notebook(root)
+notebook.pack(expand=True, fill="both", padx=10, pady=10)
+
+survey_frame = ttk.Frame(notebook)
+notebook.add(survey_frame, text="📋 Survey Generator")
+
+ttk.Label(survey_frame, text="Topic:", font=("Arial", 12)).grid(row=0, column=0, padx=5, pady=5, sticky="w")
+topic_entry = ttk.Entry(survey_frame, width=40)
+topic_entry.grid(row=0, column=1, padx=5, pady=5)
+
+ttk.Label(survey_frame, text="Target Audience:", font=("Arial", 12)).grid(row=1, column=0, padx=5, pady=5, sticky="w")
+audience_entry = ttk.Entry(survey_frame, width=40)
+audience_entry.grid(row=1, column=1, padx=5, pady=5)
+
+ttk.Label(survey_frame, text="Number of Questions:", font=("Arial", 12)).grid(row=2, column=0, padx=5, pady=5, sticky="w")
+num_questions_entry = ttk.Entry(survey_frame, width=10)
+num_questions_entry.grid(row=2, column=1, padx=5, pady=5, sticky="w")
+
+generate_survey_button = ttk.Button(survey_frame, text="Generate Questions", command=generate_survey_questions)
+generate_survey_button.grid(row=3, column=0, columnspan=2, pady=10)
+
+output_text = scrolledtext.ScrolledText(survey_frame, width=90, height=15, wrap=tk.WORD)
+output_text.grid(row=4, column=0, columnspan=2, padx=10, pady=5)
+
+save_button = ttk.Button(survey_frame, text="Save to File", command=lambda: save_output(output_text))
+save_button.grid(row=5, column=0, columnspan=2, pady=5)
+
+investor_frame = ttk.Frame(notebook)
+notebook.add(investor_frame, text="💰 Investor Finder")
+
+ttk.Label(investor_frame, text="Company Description:", font=("Arial", 12)).grid(row=0, column=0, padx=5, pady=5, sticky="w")
+company_entry = tk.Text(investor_frame, width=60, height=3)
+company_entry.grid(row=0, column=1, padx=5, pady=5)
+
+ttk.Label(investor_frame, text="Industry:", font=("Arial", 12)).grid(row=1, column=0, padx=5, pady=5, sticky="w")
+industry_entry = ttk.Entry(investor_frame, width=40)
+industry_entry.grid(row=1, column=1, padx=5, pady=5)
+
+ttk.Label(investor_frame, text="Company Stage:", font=("Arial", 12)).grid(row=2, column=0, padx=5, pady=5, sticky="w")
+stage_entry = ttk.Entry(investor_frame, width=40)
+stage_entry.grid(row=2, column=1, padx=5, pady=5)
+
+ttk.Label(investor_frame, text="Products (comma-separated):", font=("Arial", 12)).grid(row=3, column=0, padx=5, pady=5, sticky="w")
+products_entry = ttk.Entry(investor_frame, width=40)
+products_entry.grid(row=3, column=1, padx=5, pady=5)
+
+generate_investors_button = ttk.Button(investor_frame, text="Find Investors", command=analyze_company_and_find_investors)
+generate_investors_button.grid(row=4, column=0, columnspan=2, pady=10)
+
+output_text_investor = scrolledtext.ScrolledText(investor_frame, width=90, height=15, wrap=tk.WORD)
+output_text_investor.grid(row=5, column=0, columnspan=2, padx=10, pady=5)
+
+save_button_investor = ttk.Button(investor_frame, text="Save to File", command=lambda: save_output(output_text_investor))
+save_button_investor.grid(row=6, column=0, columnspan=2, pady=5)
+
+root.mainloop()
