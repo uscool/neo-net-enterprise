@@ -1,5 +1,4 @@
 from google import genai
-client=genai.Client(api_key="AIzaSyAM0gm5sC4kcyUDdo_SFsf2Oc6dFvsUvZA")
 
 def finding_hashtags(industry):
     response=client.models.generate_content(
